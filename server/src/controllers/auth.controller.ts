@@ -3,8 +3,8 @@ import { registerUser, loginUser } from "../services/auth.service";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, role } = req.body;
-    const user = await registerUser(email, password, role);
+    const { email, password, name, role } = req.body;
+    const user = await registerUser(name, email, password, role);
     res.status(201).json(user);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
