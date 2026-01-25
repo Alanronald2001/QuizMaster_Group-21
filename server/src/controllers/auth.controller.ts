@@ -1,22 +1,42 @@
-import { Request, Response } from "express";
-import { registerUser, loginUser } from "../services/auth.service";
+import { Request, Response, NextFunction } from 'express';
+import { AuthService } from '../services/auth.service';
+import { successResponse } from '../utils/response';
 
-export const register = async (req: Request, res: Response) => {
-  try {
-    const { email, password, name, role } = req.body;
-    const user = await registerUser(name, email, password, role);
-    res.status(201).json(user);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+const authService = new AuthService();
 
-export const login = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const token = await loginUser(email, password);
-    res.json(token);
-  } catch (err: any) {
-    res.status(401).json({ message: err.message });
+export class AuthController {
+  async register(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await authService.register(req.body);
+      res.status(201).json(successResponse(result, 'Registration successful'));
+    } catch (error) {
+      next(error);
+    }
   }
-};
+
+  async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await authService.login(req.body);
+      res.json(successResponse(result, 'Login successful'));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      // JWT is stateless, so logout is handled on client side
+      res.json(successResponse(null, 'Logout successful'));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getCurrentUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.json(successResponse(req.user));
+    } catch (error) {
+      next(error);
+    }
+  }
+}

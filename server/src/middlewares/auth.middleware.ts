@@ -1,40 +1,55 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { env } from '../config/env';
+import { UnauthorizedError, ForbiddenError } from '../utils/errors';
+import { AuthUser } from '../types/express';
+import { createRequire } from 'module';
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const require = createRequire(import.meta.url);
+const { Role } = require('@prisma/client');
 
-export interface AuthRequest extends Request {
-  user?: {
-    userId: string;
-    role: string;
-  };
-}
-
-export const authenticate = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded as any;
-    next();
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedError('No token provided');
+    }
+
+    const token = authHeader.substring(7);
+
+    try {
+      const decoded = jwt.verify(token, env.JWT_SECRET) as AuthUser;
+      req.user = decoded;
+      next();
+    } catch (error) {
+      throw new UnauthorizedError('Invalid or expired token');
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
-export const authorize =
-  (...roles: string[]) =>
-  (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!roles.includes(req.user?.role!)) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
-    next();
-  };
+export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return next(new UnauthorizedError('Authentication required'));
+  }
+
+  if (req.user.role !== Role.ADMIN) {
+    return next(new ForbiddenError('Admin access required'));
+  }
+
+  next();
+};
+
+export const requireStudent = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return next(new UnauthorizedError('Authentication required'));
+  }
+
+  if (req.user.role !== Role.STUDENT) {
+    return next(new ForbiddenError('Student access required'));
+  }
+
+  next();
+};

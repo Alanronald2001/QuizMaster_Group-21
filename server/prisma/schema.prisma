@@ -1,27 +1,27 @@
 // prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 
-/* =====================
-   ENUMS
-===================== */
+// =====================
+// ENUMS
+// =====================
 
 enum Role {
   ADMIN
   STUDENT
 }
 
-/* =====================
-   USER
-===================== */
+// =====================
+// USER
+// =====================
 
 model User {
   id        String   @id @default(cuid())
@@ -37,9 +37,9 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-/* =====================
-   QUIZ
-===================== */
+// =====================
+// QUIZ
+// =====================
 
 model Quiz {
   id          String   @id @default(cuid())
@@ -56,9 +56,9 @@ model Quiz {
   updatedAt DateTime @updatedAt
 }
 
-/* =====================
-   QUESTION
-===================== */
+// =====================
+// QUESTION
+// =====================
 
 model Question {
   id        String   @id @default(cuid())
@@ -75,9 +75,9 @@ model Question {
   updatedAt DateTime @updatedAt
 }
 
-/* =====================
-   OPTION
-===================== */
+// =====================
+// OPTION
+// =====================
 
 model Option {
   id         String   @id @default(cuid())
@@ -94,9 +94,9 @@ model Option {
   updatedAt DateTime @updatedAt
 }
 
-/* =====================
-   QUIZ ATTEMPT
-===================== */
+// =====================
+// QUIZ ATTEMPT
+// =====================
 
 model QuizAttempt {
   id             String   @id @default(cuid())
@@ -114,9 +114,9 @@ model QuizAttempt {
   submittedAt DateTime @default(now())
 }
 
-/* =====================
-   ANSWER
-===================== */
+// =====================
+// ANSWER
+// =====================
 
 model Answer {
   id         String   @id @default(cuid())
