@@ -13,13 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Lock, User as UserIcon, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -28,7 +21,6 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<"ADMIN" | "STUDENT">("STUDENT");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -60,13 +52,9 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await register(username, email, password, role);
-      // Navigate based on role
-      if (role === "ADMIN") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/student/dashboard");
-      }
+      await register(username, email, password);
+      // All new registrations are students by default
+      navigate("/student/dashboard");
     } catch (err) {
       // Error is already handled in AuthContext with toast
       console.error("Registration error:", err);
@@ -149,19 +137,6 @@ export default function Register() {
                   disabled={loading}
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
-              <Select value={role} onValueChange={(value) => setRole(value as "ADMIN" | "STUDENT")} disabled={loading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="STUDENT">Student</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             {error && (

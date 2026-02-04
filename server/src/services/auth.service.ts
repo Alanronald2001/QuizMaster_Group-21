@@ -28,12 +28,13 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // Create user
+    // Create user with STUDENT role by default
+    // Admin users must be created directly from the backend
     const user = await this.userRepository.create({
       username: data.username,
       email: data.email,
       password: hashedPassword,
-      role: data.role,
+      role: 'STUDENT',
     });
 
     // Generate token
