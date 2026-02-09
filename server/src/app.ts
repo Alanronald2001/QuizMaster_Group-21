@@ -9,11 +9,28 @@ import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(helmet());
+// CORS configuration
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow all origins (for development/permanent fix as requested)
+            // For credentials to work, origin cannot be '*'
+            callback(null, origin || "*");
+        },
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
+
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(
+    helmet({
+        contentSecurityPolicy: false, // Disable CSP to avoid CORS conflicts
+        crossOriginResourcePolicy: false, // Allow cross-origin requests
+    })
+);
 
 // Routes
 app.use("/api/auth", authRoutes);

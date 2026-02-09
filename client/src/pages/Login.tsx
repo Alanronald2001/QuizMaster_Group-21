@@ -44,11 +44,20 @@ export default function Login() {
 
     setLoading(true);
     try {
-      await login(username, password);
-      // Navigation will be handled by useEffect after login
-    } catch (err) {
-      // Error is already handled in AuthContext with toast
-      setError("Invalid username or password");
+      const result = await login(username, password);
+      // login() doesn't return anything in AuthContext, but the user is saved in context
+      // We'll wait a tiny bit for state to settle or use lowercase values for manual redirect
+      // For now, let's just let the AuthContext update do its job or use a more robust check
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+      const role = storedUser.role?.toLowerCase();
+      if (role === "admin") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/student/dashboard", { replace: true });
+      }
+    } catch (err: any) {
+      // Error is handled in context, but we need to show it here if it's not a toast
+      setError(err.response?.data?.message || "Invalid username or password");
     } finally {
       setLoading(false);
     }

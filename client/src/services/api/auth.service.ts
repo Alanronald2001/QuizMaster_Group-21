@@ -23,13 +23,13 @@ export interface AuthResponse {
 
 export const authService = {
     async register(data: RegisterRequest): Promise<AuthResponse> {
-        const response = await apiClient.post<AuthResponse>('/auth/register', data);
-        return response.data;
+        const response = await apiClient.post<any>('/auth/register', data);
+        return response.data.data;
     },
 
     async login(data: LoginRequest): Promise<AuthResponse> {
-        const response = await apiClient.post<AuthResponse>('/auth/login', data);
-        return response.data;
+        const response = await apiClient.post<any>('/auth/login', data);
+        return response.data.data;
     },
 
     async logout(): Promise<void> {
@@ -39,7 +39,7 @@ export const authService = {
     },
 
     async getCurrentUser(): Promise<AuthResponse['user']> {
-        const response = await apiClient.get<AuthResponse['user']>('/auth/me');
-        return response.data;
+        const response = await apiClient.get<any>('/auth/me');
+        return response.data.data;
     },
 };

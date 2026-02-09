@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { authService } from '@/services/api/auth.service';
 import type { AuthResponse } from '@/services/api/auth.service';
 import { toast } from 'sonner';
@@ -7,7 +7,7 @@ interface User {
     id: string;
     username: string;
     email: string;
-    role: 'ADMIN' | 'STUDENT';
+    role: 'admin' | 'student';
 }
 
 interface AuthContextType {
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (token && storedUser) {
                 try {
                     // Verify token is still valid by fetching current user
-                    const currentUser = await authService.getCurrentUser();
+                    const currentUser = await authService.getCurrentUser() as User;
                     setUser(currentUser);
                 } catch (error) {
                     // Token is invalid, clear storage
@@ -67,8 +67,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const response: AuthResponse = await authService.login({ username, password });
             localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            setUser(response.user);
+            const userWithCasedRole: User = {
+                ...response.user,
+                role: response.user.role.toLowerCase() as 'admin' | 'student'
+            };
+            localStorage.setItem('user', JSON.stringify(userWithCasedRole));
+            setUser(userWithCasedRole);
             toast.success('Login successful!');
         } catch (error: any) {
             const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
@@ -81,8 +85,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const response: AuthResponse = await authService.register({ username, email, password });
             localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            setUser(response.user);
+            const userWithCasedRole: User = {
+                ...response.user,
+                role: response.user.role.toLowerCase() as 'admin' | 'student'
+            };
+            localStorage.setItem('user', JSON.stringify(userWithCasedRole));
+            setUser(userWithCasedRole);
             toast.success('Registration successful!');
         } catch (error: any) {
             const message = error.response?.data?.message || 'Registration failed. Please try again.';
@@ -113,8 +121,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         register,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'ADMIN',
-        isStudent: user?.role === 'STUDENT',
+        isAdmin: user?.role === 'admin',
+        isStudent: user?.role === 'student',
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
