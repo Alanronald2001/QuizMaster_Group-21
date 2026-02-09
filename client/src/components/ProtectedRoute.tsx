@@ -30,12 +30,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         return <Navigate to="/login" replace />;
     }
 
-    if (requireAdmin && !isAdmin) {
-        return <Navigate to="/student/dashboard" replace />;
-    }
-
-    if (requireStudent && !isStudent) {
-        return <Navigate to="/admin/dashboard" replace />;
+    if ((requireAdmin && !isAdmin) || (requireStudent && !isStudent)) {
+        return <Navigate to="/login" replace />;
     }
 
     return <>{children}</>;

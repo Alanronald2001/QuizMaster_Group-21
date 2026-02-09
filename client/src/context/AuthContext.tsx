@@ -48,8 +48,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (token && storedUser) {
                 try {
                     // Verify token is still valid by fetching current user
-                    const currentUser = await authService.getCurrentUser() as User;
-                    setUser(currentUser);
+                    const currentUser = await authService.getCurrentUser();
+                    if (currentUser && currentUser.role) {
+                        const userWithCasedRole: User = {
+                            ...currentUser,
+                            role: currentUser.role.toLowerCase() as 'admin' | 'student'
+                        };
+                        setUser(userWithCasedRole);
+                    } else {
+                        throw new Error('Invalid user data');
+                    }
                 } catch (error) {
                     // Token is invalid, clear storage
                     localStorage.removeItem('token');
@@ -66,6 +74,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const login = async (username: string, password: string) => {
         try {
             const response: AuthResponse = await authService.login({ username, password });
+            if (!response || !response.user) {
+                throw new Error('Login failed: Invalid response from server');
+            }
+
             localStorage.setItem('token', response.token);
             const userWithCasedRole: User = {
                 ...response.user,
@@ -75,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userWithCasedRole);
             toast.success('Login successful!');
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+            const message = error.response?.data?.message || error.message || 'Login failed. Please check your credentials.';
             toast.error(message);
             throw error;
         }
@@ -84,6 +96,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const register = async (username: string, email: string, password: string) => {
         try {
             const response: AuthResponse = await authService.register({ username, email, password });
+            if (!response || !response.user) {
+                throw new Error('Registration failed: Invalid response from server');
+            }
+
             localStorage.setItem('token', response.token);
             const userWithCasedRole: User = {
                 ...response.user,
@@ -93,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userWithCasedRole);
             toast.success('Registration successful!');
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Registration failed. Please try again.';
+            const message = error.response?.data?.message || error.message || 'Registration failed. Please try again.';
             toast.error(message);
             throw error;
         }
@@ -121,8 +137,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         register,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
-        isStudent: user?.role === 'student',
+        isAdmin: user?.role?.toLowerCase() === 'admin',
+        isStudent: user?.role?.toLowerCase() === 'student',
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

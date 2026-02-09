@@ -38,23 +38,23 @@ export interface UpdateQuizRequest {
 
 export const quizService = {
     async getAll(): Promise<Quiz[]> {
-        const response = await apiClient.get<Quiz[]>('/quizzes');
-        return response.data;
+        const response = await apiClient.get<any>('/quizzes');
+        return response.data.data;
     },
 
     async getById(id: string): Promise<Quiz> {
-        const response = await apiClient.get<Quiz>(`/quizzes/${id}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/quizzes/${id}`);
+        return response.data.data;
     },
 
     async create(data: CreateQuizRequest): Promise<Quiz> {
-        const response = await apiClient.post<Quiz>('/quizzes', data);
-        return response.data;
+        const response = await apiClient.post<any>('/quizzes', data);
+        return response.data.data;
     },
 
     async update(id: string, data: UpdateQuizRequest): Promise<Quiz> {
-        const response = await apiClient.put<Quiz>(`/quizzes/${id}`, data);
-        return response.data;
+        const response = await apiClient.put<any>(`/quizzes/${id}`, data);
+        return response.data.data;
     },
 
     async delete(id: string): Promise<void> {

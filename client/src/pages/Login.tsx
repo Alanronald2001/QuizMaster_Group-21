@@ -44,19 +44,19 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const result = await login(username, password);
-      // login() doesn't return anything in AuthContext, but the user is saved in context
-      // We'll wait a tiny bit for state to settle or use lowercase values for manual redirect
-      // For now, let's just let the AuthContext update do its job or use a more robust check
-      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-      const role = storedUser.role?.toLowerCase();
-      if (role === "admin") {
-        navigate("/admin/dashboard", { replace: true });
-      } else {
-        navigate("/student/dashboard", { replace: true });
+      await login(username, password);
+
+      const storedUserString = localStorage.getItem("user");
+      if (storedUserString) {
+        const storedUser = JSON.parse(storedUserString);
+        const role = storedUser.role?.toLowerCase();
+        if (role === "admin") {
+          navigate("/admin/dashboard", { replace: true });
+        } else {
+          navigate("/student/dashboard", { replace: true });
+        }
       }
     } catch (err: any) {
-      // Error is handled in context, but we need to show it here if it's not a toast
       setError(err.response?.data?.message || "Invalid username or password");
     } finally {
       setLoading(false);

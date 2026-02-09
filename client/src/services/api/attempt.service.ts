@@ -45,32 +45,32 @@ export interface AttemptStatistics {
 
 export const attemptService = {
     async submit(data: SubmitAttemptRequest): Promise<QuizAttempt> {
-        const response = await apiClient.post<QuizAttempt>('/attempts', data);
-        return response.data;
+        const response = await apiClient.post<any>('/attempts', data);
+        return response.data.data;
     },
 
     async getById(id: string): Promise<QuizAttempt> {
-        const response = await apiClient.get<QuizAttempt>(`/attempts/${id}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/attempts/${id}`);
+        return response.data.data;
     },
 
     async getByQuizId(quizId: string): Promise<QuizAttempt[]> {
-        const response = await apiClient.get<QuizAttempt[]>(`/quizzes/${quizId}/attempts`);
-        return response.data;
+        const response = await apiClient.get<any>(`/quizzes/${quizId}/attempts`);
+        return response.data.data;
     },
 
     async getByUserId(userId: string): Promise<QuizAttempt[]> {
-        const response = await apiClient.get<QuizAttempt[]>(`/users/${userId}/attempts`);
-        return response.data;
+        const response = await apiClient.get<any>(`/users/${userId}/attempts`);
+        return response.data.data;
     },
 
     async getMyAttempts(): Promise<QuizAttempt[]> {
-        const response = await apiClient.get<QuizAttempt[]>('/attempts/me');
-        return response.data;
+        const response = await apiClient.get<any>('/attempts/me');
+        return response.data.data;
     },
 
     async getStatistics(quizId: string): Promise<AttemptStatistics> {
-        const response = await apiClient.get<AttemptStatistics>(`/analytics/quizzes/${quizId}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/analytics/quizzes/${quizId}`);
+        return response.data.data;
     },
 };
