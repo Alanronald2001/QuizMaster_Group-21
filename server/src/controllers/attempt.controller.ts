@@ -16,7 +16,7 @@ export class AttemptController {
 
     async getAttemptById(req: Request, res: Response, next: NextFunction) {
         try {
-            const attempt = await attemptService.getAttemptById(req.params.id);
+            const attempt = await attemptService.getAttemptById(req.params.id as string);
             res.json(successResponse(attempt));
         } catch (error) {
             next(error);
@@ -25,7 +25,7 @@ export class AttemptController {
 
     async getAttemptsByQuizId(req: Request, res: Response, next: NextFunction) {
         try {
-            const attempts = await attemptService.getAttemptsByQuizId(req.params.quizId);
+            const attempts = await attemptService.getAttemptsByQuizId(req.params.quizId as string);
             res.json(successResponse(attempts));
         } catch (error) {
             next(error);
@@ -43,7 +43,16 @@ export class AttemptController {
 
     async getAttemptsByUserId(req: Request, res: Response, next: NextFunction) {
         try {
-            const attempts = await attemptService.getAttemptsByUserId(req.params.userId);
+            const attempts = await attemptService.getAttemptsByUserId(req.params.userId as string);
+            res.json(successResponse(attempts));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAllAttempts(req: Request, res: Response, next: NextFunction) {
+        try {
+            const attempts = await attemptService.getAllAttempts();
             res.json(successResponse(attempts));
         } catch (error) {
             next(error);

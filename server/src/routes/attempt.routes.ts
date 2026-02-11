@@ -13,6 +13,7 @@ router.get('/me', authenticate, attemptController.getMyAttempts);
 router.get('/:id', authenticate, attemptController.getAttemptById);
 
 // Admin routes
+router.get('/', authenticate, requireAdmin, attemptController.getAllAttempts);
 router.get('/quiz/:quizId', authenticate, requireAdmin, attemptController.getAttemptsByQuizId);
 router.get('/user/:userId', authenticate, requireAdmin, attemptController.getAttemptsByUserId);
 

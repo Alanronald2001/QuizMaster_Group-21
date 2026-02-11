@@ -33,8 +33,11 @@ export default function QuizAttempts() {
       if (quizId) {
         // Load attempts for specific quiz (admin only)
         data = await attemptService.getByQuizId(quizId);
+      } else if (isAdmin) {
+        // Load all attempts for admin
+        data = await attemptService.getAll();
       } else {
-        // Load all attempts (admin view)
+        // Load my attempts (student view)
         data = await attemptService.getMyAttempts();
       }
 

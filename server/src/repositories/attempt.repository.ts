@@ -21,6 +21,7 @@ export interface IAttemptRepository {
     findById(id: string): Promise<AttemptWithRelations | null>;
     findByQuizId(quizId: string): Promise<AttemptWithRelations[]>;
     findByUserId(userId: string): Promise<AttemptWithRelations[]>;
+    findAll(): Promise<AttemptWithRelations[]>;
 }
 
 export class AttemptRepository implements IAttemptRepository {
@@ -115,6 +116,31 @@ export class AttemptRepository implements IAttemptRepository {
     async findByUserId(userId: string): Promise<AttemptWithRelations[]> {
         return prisma.quizAttempt.findMany({
             where: { userId },
+            include: {
+                answers: true,
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        email: true,
+                    },
+                },
+                quiz: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                    },
+                },
+            },
+            orderBy: {
+                submittedAt: 'desc',
+            },
+        }) as Promise<AttemptWithRelations[]>;
+    }
+
+    async findAll(): Promise<AttemptWithRelations[]> {
+        return prisma.quizAttempt.findMany({
             include: {
                 answers: true,
                 user: {

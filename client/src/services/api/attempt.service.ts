@@ -69,6 +69,11 @@ export const attemptService = {
         return response.data.data;
     },
 
+    async getAll(): Promise<QuizAttempt[]> {
+        const response = await apiClient.get<any>('/attempts');
+        return response.data.data;
+    },
+
     async getStatistics(quizId: string): Promise<AttemptStatistics> {
         const response = await apiClient.get<any>(`/analytics/quizzes/${quizId}`);
         return response.data.data;

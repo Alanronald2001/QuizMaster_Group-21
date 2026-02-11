@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { PerformanceChart } from "@/components/analytics/PerformanceChart";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -146,6 +147,11 @@ export default function StudentDashboard() {
               <div className="text-2xl font-bold">{getAverageScore()}%</div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Performance Chart */}
+        <div className="mb-8">
+          <PerformanceChart attempts={attempts} />
         </div>
 
         {/* Available Quizzes */}

@@ -64,4 +64,8 @@ export class AttemptService {
     async getAttemptsByUserId(userId: string): Promise<AttemptWithRelations[]> {
         return this.attemptRepository.findByUserId(userId);
     }
+
+    async getAllAttempts(): Promise<AttemptWithRelations[]> {
+        return this.attemptRepository.findAll();
+    }
 }
