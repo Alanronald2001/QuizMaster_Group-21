@@ -10,6 +10,7 @@ import CreateQuiz from "@/pages/CreateQuiz";
 import TakeQuiz from "@/pages/TakeQuiz";
 import QuizResults from "@/pages/QuizResults";
 import QuizAttempts from "@/pages/QuizAttempts";
+import Leaderboard from "@/pages/Leaderboard";
 
 function App() {
   return (
@@ -84,6 +85,15 @@ function App() {
             element={
               <ProtectedRoute requireStudent>
                 <QuizResults />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
               </ProtectedRoute>
             }
           />
