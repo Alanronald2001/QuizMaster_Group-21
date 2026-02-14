@@ -15,6 +15,7 @@ A modern, full-stack quiz application built with React, TypeScript, Node.js, Exp
 - Take quizzes with progress tracking
 - View detailed results with answer explanations
 - Track quiz history and performance
+- Track ranking through leaderboard
 
 ### Technical Features
 - **JWT Authentication** with role-based authorization
