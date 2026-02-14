@@ -5,6 +5,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.routes";
 import quizRoutes from "./routes/quiz.routes";
 import attemptRoutes from "./routes/attempt.routes";
+import leaderboardRoutes from "./routes/leaderboard.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/attempts", attemptRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

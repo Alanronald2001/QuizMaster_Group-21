@@ -20,6 +20,7 @@ import {
   Edit,
   BarChart,
   Loader2,
+  Trophy,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -118,10 +119,16 @@ export default function AdminDashboard() {
                 </p>
               </div>
             </div>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => navigate("/leaderboard")}>
+                <Trophy className="w-4 h-4 mr-2" />
+                Leaderboard
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </header>
