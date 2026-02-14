@@ -14,14 +14,14 @@ export interface QuizOption {
   id?: string;
   text: string;
   isCorrect: boolean;
-  order: number;
+  order?: number;
 }
 
 // Quiz question
 export interface QuizQuestion {
   id?: string;
   text: string;
-  order: number;
+  order?: number;
   options: QuizOption[];
 }
 
@@ -45,13 +45,10 @@ export interface QuizAttempt {
   userId: string;
   quizId: string;
   submittedAt: string;
-  answers: {
-    id: string;
-    questionId: string;
-    optionId: string;
-  }[];
+  answers: any; // Loosened for mock storage support
   user?: User;
   quiz?: Quiz;
+  [key: string]: any; // Allow for extra properties like quizTitle, username, role
 }
 
 // For displaying results
