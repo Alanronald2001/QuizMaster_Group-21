@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Lock, User as UserIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,6 +22,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showLongRequestNote, setShowLongRequestNote] = useState(false);
+
+  useEffect(() => {
+    let timer: any;
+    if (loading) {
+      timer = setTimeout(() => {
+        setShowLongRequestNote(true);
+      }, 10000);
+    } else {
+      setShowLongRequestNote(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -57,7 +71,11 @@ export default function Login() {
         }
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid username or password");
+      let message = err.response?.data?.message || "Invalid username or password";
+      if (showLongRequestNote) {
+        message += ". The server was starting up, please try again after a minute.";
+      }
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -113,6 +131,15 @@ export default function Login() {
               </Alert>
             )}
 
+            {showLongRequestNote && (
+              <Alert className="bg-amber-50 border-amber-200">
+                <Info className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  The server is starting up. This may take up to a minute. Please try again after a minute if it fails. Thank you for your patience!
+                </AlertDescription>
+              </Alert>
+            )}
+
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing In..." : "Sign In"}
             </Button>
@@ -135,6 +162,12 @@ export default function Login() {
                 <strong>Student:</strong> student / student123
               </p>
             </div>
+          </div>
+
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
+            <p className="text-xs text-blue-700 leading-relaxed text-center">
+              <strong>Note:</strong> This service uses a free-tier instance and may sleep after 15 minutes of inactivity. The first request after inactivity may take up to a minute to respond. <strong>Please try again after a minute.</strong>
+            </p>
           </div>
         </CardContent>
       </Card>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Lock, User as UserIcon, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -23,6 +24,19 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showLongRequestNote, setShowLongRequestNote] = useState(false);
+
+  useEffect(() => {
+    let timer: any;
+    if (loading) {
+      timer = setTimeout(() => {
+        setShowLongRequestNote(true);
+      }, 10000);
+    } else {
+      setShowLongRequestNote(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +72,9 @@ export default function Register() {
     } catch (err) {
       // Error is already handled in AuthContext with toast
       console.error("Registration error:", err);
+      if (showLongRequestNote) {
+        setError("The server was starting up, please try again after a minute.");
+      }
     } finally {
       setLoading(false);
     }
@@ -145,6 +162,15 @@ export default function Register() {
               </Alert>
             )}
 
+            {showLongRequestNote && (
+              <Alert className="bg-amber-50 border-amber-200">
+                <Info className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  The server is starting up. This may take up to a minute. Please try again after a minute if it fails. Thank you for your patience!
+                </AlertDescription>
+              </Alert>
+            )}
+
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating Account..." : "Sign Up"}
             </Button>
@@ -155,6 +181,12 @@ export default function Register() {
             <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
               Sign In
             </Link>
+          </div>
+
+          <div className="mt-6 p-3 bg-blue-50 border border-blue-100 rounded-md">
+            <p className="text-xs text-blue-700 leading-relaxed text-center">
+              <strong>Note:</strong> This service uses a free-tier instance and may sleep after 15 minutes of inactivity. The first request after inactivity may take up to a minute to respond. <strong>Please try again after a minute.</strong>
+            </p>
           </div>
         </CardContent>
       </Card>
